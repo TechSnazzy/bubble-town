@@ -1,0 +1,44 @@
+{
+  "name": "Bubble Town",
+  "theme": "town",
+
+  "area": 900000,
+
+  "difficulty": {
+    "targets": 12,
+    "hints": 3,
+    "coverChance": 0.7,
+    "maxHidden": 0.35,
+    "lookalikes": 2,
+    "decoyAnimals": 30
+  },
+
+  "ground": {
+    "color": "#f6e3cf",
+    "grass": "#cdeba9",
+    "sidewalk": "#f1dcc6",
+    "road": "#9c95aa",
+    "water": "#8fd3e8",
+    "waterShine": "#b4e8f5",
+    "lilyPad": "#5fc27a"
+  },
+
+  "layout": {
+    "roads": { "count": [1, 2], "width": 140, "sidewalk": 20, "crossings": [1, 2], "cars": [3, 5] },
+    "water": { "count": [0, 2], "rx": [110, 170], "swimmers": [2, 4] },
+    "parks": { "count": [4, 7], "rx": [150, 320] },
+    "landmarks": [
+      { "asset": "fountain", "chance": 0.75 }
+    ],
+    "roadside": { "asset": "lamp", "spacing": 260 }
+  },
+
+  "fill": {
+    "building": [6, 9],
+    "tree": [14, 22],
+    "bush": [14, 22],
+    "flower": [40, 60],
+    "person": [22, 30],
+    "prop": [10, 16]
+  }
+}

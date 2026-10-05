@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Asset gallery</title>
+<style>
+  body { margin: 0; padding: 16px; background: #f6e3cf; font-family: system-ui, sans-serif; color: #4a3150; }
+  h1 { font-size: 20px; margin: 0 0 12px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+  figure { margin: 0; background: #fff; border-radius: 12px; padding: 8px; text-align: center; }
+  .frame { position: relative; outline: 1px dashed #c9a0ff; display: inline-block; }
+  .frame img { display: block; }
+  /* red dot = anchor point (the feet) */
+  .dot { position: absolute; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; background: #e63946; }
+  figcaption { font-size: 11px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<h1>Asset gallery: every catalog entry at 1.5x. Dashed line = image frame, red dot = anchor.</h1>
+<div class="grid" id="grid"></div>
+<script type="module">
+  // Open via the local server: http://localhost:8123/tools/gallery.html
+  const catalog = await fetch('../catalog/catalog.json').then(r => r.json());
+  const zoom = 1.5;
+  document.getElementById('grid').innerHTML = catalog.assets.map(a => `
+    <figure>
+      <div class="frame" style="width:${a.w * zoom}px;height:${a.h * zoom}px">
+        <img src="../${a.file}" width="${a.w * zoom}" height="${a.h * zoom}" alt="">
+        <div class="dot" style="left:${a.anchor[0] * 100}%;top:${a.anchor[1] * 100}%"></div>
+      </div>
+      <figcaption>${a.id}${a.canBeTarget ? ' ★' : ''}</figcaption>
+    </figure>`).join('');
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+# Private notes for AI coding assistants. Never published.
+CLAUDE.md
+claude.md
+AGENTS.md
+agents.md
+AGENT.md
+agent.md
+STATUS.md
+.claude/
+
+# Secrets (none are used today, but never commit them)
+.env
+.env.*
+*.pem
+*.key
+
+# Every other dot file and dot folder (.DS_Store, .vscode, .idea, ...), except this file
+.*
+!.gitignore
+
+# Style reference screenshot of another game: for inspiration only, not ours to publish
+reference/
+
+# Tool and OS leftovers
+node_modules/
+*.log
+icons/.render-*.html
+Thumbs.db

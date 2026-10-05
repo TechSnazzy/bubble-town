@@ -1,0 +1,133 @@
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; height: 100%; overflow: hidden; background: #f6e3cf;
+  font-family: ui-rounded, "Nunito", system-ui, -apple-system, sans-serif;
+  -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+}
+
+/* ---------- page layout ----------
+   Default (portrait, iPad, laptop): bar on top, scene in the middle, tray at the bottom.
+   Phone held sideways (short and wide): scene on the left, bar and tray in a side column. */
+html { touch-action: manipulation; }
+#app {
+  position: fixed; inset: 0;
+  display: grid; grid-template-columns: 1fr; grid-template-rows: auto 1fr auto;
+  grid-template-areas: "bar" "view" "tray";
+  gap: 8px;
+  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+}
+#bar { grid-area: bar; display: flex; gap: 8px; align-items: center; min-width: 0; }
+#bar .spacer { flex: 1; }
+#tray { grid-area: tray; }
+
+/* ---------- scene ---------- */
+#view {
+  grid-area: view; position: relative; overflow: hidden; touch-action: none; min-height: 0;
+  border: 3px solid #4a3150; border-radius: 18px;
+}
+#scene { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+#ground, #fx { position: absolute; left: 0; top: 0; display: block; }
+#fx { width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+#ground .ink { stroke: #4a3150; stroke-width: 3; stroke-linejoin: round; }
+#ground .thin { stroke-width: 2.5; }
+#cars, #things { position: absolute; inset: 0; pointer-events: none; }
+
+.thing { position: absolute; }
+.thing .pose, .thing img { display: block; width: 100%; height: 100%; }
+.car { position: absolute; animation: drive linear infinite; }
+.car img { display: block; }
+
+/* ---------- idle animations (catalog "anim" field -> class a-<name>) ---------- */
+.idle { transform-origin: 50% 100%; }
+.a-hop    { animation: hop 2.8s infinite; }
+.a-bob    { animation: bob 1.7s ease-in-out infinite alternate; }
+.a-sway   { animation: sway 2.2s ease-in-out infinite alternate; }
+.a-waddle { animation: waddle .9s ease-in-out infinite alternate; }
+.a-slide  { animation: slide 4s ease-in-out infinite alternate; }
+.a-tree   { animation: treesway 3.2s ease-in-out infinite alternate; }
+
+@keyframes hop { 0%, 62%, 100% { transform: translateY(0) scale(1, 1); } 70% { transform: translateY(0) scale(1.1, .86); } 82% { transform: translateY(-16px) scale(.92, 1.1); } 92% { transform: translateY(0) scale(1.08, .92); } }
+@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-4px) rotate(1.5deg); } }
+@keyframes sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+@keyframes waddle { from { transform: rotate(-7deg); } to { transform: rotate(7deg); } }
+@keyframes slide { from { transform: translateX(-8px); } to { transform: translateX(8px); } }
+@keyframes treesway { from { transform: rotate(-1.6deg); } to { transform: rotate(1.6deg); } }
+@keyframes drive { from { transform: translate(0, 0); } to { transform: translate(var(--dx), var(--dy)); } }
+
+/* ---------- found / tap effects ---------- */
+.found .idle { animation: none; }
+.found .pose { animation: celebrate .9s ease-out, dance 1s ease-in-out .9s infinite alternate; }
+.ring, .puff, .spark, .hint { transform-box: fill-box; transform-origin: center; }
+.ring  { animation: ringpop .35s ease-out both; }
+.spark { animation: spark .8s ease-out forwards; }
+.puff  { animation: puff .6s ease-out forwards; }
+.hint  { animation: hintpulse 1.2s ease-in 3 both; }
+
+@keyframes celebrate { 0% { transform: translateY(0) scale(1); } 25% { transform: translateY(-34px) scale(1.3) rotate(-10deg); } 50% { transform: translateY(0) scale(.88, 1.1); } 70% { transform: translateY(-14px) scale(1.12) rotate(8deg); } 100% { transform: translateY(0) scale(1); } }
+@keyframes dance { from { transform: translateY(0) rotate(-4deg); } to { transform: translateY(-8px) rotate(4deg); } }
+@keyframes ringpop { from { transform: scale(.2); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes spark { to { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+@keyframes puff { from { transform: scale(.3); opacity: .9; } to { transform: scale(1.8); opacity: 0; } }
+@keyframes hintpulse { 0% { transform: scale(3); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(.9); opacity: 1; } }
+
+/* ---------- bar and tray ---------- */
+.pill { background: #fff; border: 3px solid #4a3150; border-radius: 999px; padding: 5px 13px; font-weight: 800; color: #4a3150; font-size: 17px; white-space: nowrap; }
+#tray {
+  display: grid; gap: 6px; padding: 6px;
+  /* Every target is always visible: cards shrink and wrap instead of scrolling. */
+  /* Column count is set by layoutTray() in engine.js. */
+  justify-content: center;
+  background: #fff; border: 3px solid #4a3150; border-radius: 18px;
+}
+.card {
+  border: 0; background: #fff6e8; border-radius: 12px; padding: 4px 2px 3px; min-width: 0;
+  display: flex; flex-direction: column; align-items: center; position: relative;
+  font-family: inherit; color: #4a3150; cursor: pointer;
+}
+.card img { width: 100%; height: var(--card-img, 44px); object-fit: contain; pointer-events: none; }
+.card span { font-size: 11px; font-weight: 800; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.card.done img { opacity: .3; }
+.card.done::after { content: "\2713"; position: absolute; top: 4px; left: 50%; transform: translateX(-50%); font-size: 28px; font-weight: 900; color: #2fb360; }
+.card.nope { animation: nope .4s; }
+/* Small cards: picture only, smaller check mark. */
+#tray.compact .card { padding: 3px 1px; border-radius: 8px; }
+#tray.compact .card span { display: none; }
+#tray.compact .card.done::after { font-size: 20px; top: 50%; transform: translate(-50%, -50%); }
+@keyframes nope { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+/* Phones in portrait: two rows of six small cards, smaller pills. */
+@media (max-width: 500px) {
+  #app { gap: 6px; }
+  .pill { font-size: 14px; padding: 4px 10px; }
+  #tray { gap: 3px; padding: 4px; }
+  .card span { font-size: 10px; }
+}
+/* iPads and laptops: bigger cards, all in one row when there is room. */
+@media (min-width: 900px) and (min-height: 600px) {
+  .card span { font-size: 12px; }
+}
+/* Phones held sideways: side column, so the scene keeps the full height. */
+@media (orientation: landscape) and (max-height: 500px) {
+  #app {
+    grid-template-columns: 1fr 190px; grid-template-rows: auto 1fr;
+    grid-template-areas: "view bar" "view tray";
+  }
+  #bar { flex-wrap: wrap; gap: 4px; }
+  #bar .spacer { display: none; }
+  #title { width: 100%; text-align: center; }
+  #hints, #count { flex: 1; text-align: center; }
+  .pill { font-size: 13px; padding: 3px 8px; }
+  #tray { gap: 4px; padding: 4px; align-content: start; overflow-y: auto; }
+  .card span { font-size: 10px; }
+}
+
+/* ---------- win screen ---------- */
+.win { position: fixed; inset: 0; z-index: 9; background: rgba(74, 49, 80, .55); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.win[hidden] { display: none; }
+.win .box { background: #fff; border: 4px solid #4a3150; border-radius: 28px; padding: 26px 30px; text-align: center; color: #4a3150; animation: pop .5s ease-out both; max-width: 80vw; }
+.win h1 { margin: 0 0 6px; font-size: 30px; }
+.win p { margin: 0 0 16px; font-size: 18px; }
+.win button { font: inherit; font-weight: 800; font-size: 18px; padding: 10px 22px; border-radius: 999px; border: 3px solid #4a3150; background: #ffd93d; color: #4a3150; }
+.conf { position: absolute; top: 0; font-size: 28px; animation: fall linear forwards; }
+@keyframes fall { from { transform: translateY(-10vh) rotate(0); } to { transform: translateY(110vh) rotate(540deg); } }
+@keyframes pop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }

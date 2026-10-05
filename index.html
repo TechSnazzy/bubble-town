@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bubble Town">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f6e3cf">
+<title>Bubble Town</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+<div id="app">
+  <div id="bar">
+    <div class="pill" id="title">Bubble Town</div>
+    <div class="spacer"></div>
+    <div class="pill" id="hints">Hints: 0</div>
+    <div class="pill" id="count">0 / 0</div>
+  </div>
+  <div id="view">
+    <div id="scene">
+      <svg id="ground"></svg>
+      <div id="cars"></div>
+      <div id="things"></div>
+      <svg id="fx" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+  </div>
+  <div id="tray"></div>
+</div>
+<div class="win" id="win" hidden>
+  <div class="box"><h1>You found them all!</h1><p>Great looking!</p><button id="again">New town</button></div>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
